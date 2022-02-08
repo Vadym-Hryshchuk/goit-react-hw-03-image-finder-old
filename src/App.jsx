@@ -1,10 +1,11 @@
 import React, { Component } from "react";
+import toast, { Toaster } from "react-hot-toast";
+import ScrollToTop from "react-scroll-to-top";
 import apiGetImages from "./services/PixabayApi";
 import Searchbar from "./components/searchbar/Searchbar";
 import ImageGallery from "./components/imageGallery/ImageGallery";
 import Modal from "./components/modal/Modal";
-
-import { ReactComponent as Pixabay } from "./pixabay.svg";
+import Loader from "./components/loader/Loader";
 
 class App extends Component {
   state = {
@@ -13,6 +14,7 @@ class App extends Component {
     images: [],
     chooseImage: null,
     showModal: false,
+    loading: false,
   };
 
   componentDidUpdate(prevProps, prevState) {
@@ -44,15 +46,17 @@ class App extends Component {
 
   fetchSearchQuery = async () => {
     const { searchQuery, page } = this.state;
+    this.setState({ loading: true });
     try {
       const { hits } = await apiGetImages(searchQuery, page);
+
       if (hits.length === 0) {
-        console.log("Нічого не знайдено");
+        toast.error("Nothing was found for your query");
         return;
       }
       this.setState(({ images }) => ({ images: [...images, ...hits] }));
     } catch {
-      console.log("Щось пішло не так");
+      toast.error("An error has occurred, please try again");
     } finally {
       this.setState({ loading: false });
     }
@@ -71,23 +75,36 @@ class App extends Component {
   };
 
   render() {
-    const { showModal } = this.state;
+    const { showModal, loading } = this.state;
 
     return (
       <div>
-        <Pixabay width="250" />
         <Searchbar onSubmit={this.searchQuery} />
+        <ScrollToTop smooth />
         <ImageGallery
           images={this.state.images}
           onClick={this.chooseImage}
           loadMore={this.loadMore}
         />
+        {loading && <Loader />}
         {showModal && (
           <Modal
             chooseImage={this.state.chooseImage}
             onClose={this.toggleShowModal}
           />
         )}
+        <Toaster
+          position="top-right"
+          toastOptions={{
+            className: "",
+            style: {
+              border: "1px solid #713200",
+              padding: "16px",
+              fontSize: "20px",
+              color: "#713200",
+            },
+          }}
+        />
       </div>
     );
   }

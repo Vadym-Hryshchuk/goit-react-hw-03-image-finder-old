@@ -1,39 +1,44 @@
 import React from "react";
+import toast from "react-hot-toast";
 import PropTypes from "prop-types";
-import { VscSearch } from "react-icons/vsc";
-import { IconContext } from "react-icons";
+import { FcSearch } from "react-icons/fc";
+import { ReactComponent as Pixabay } from "./pixabay.svg";
+import {
+  Header,
+  SearchForm,
+  SearchFormButton,
+  SearchFormButtonLabel,
+  SearchFormInput,
+} from "./Searchbar.styled";
 
 const Searchbar = ({ onSubmit }) => {
   const handleSubmit = (e) => {
     e.preventDefault();
     const searchQuery = e.currentTarget.elements.query.value;
     if (searchQuery.trim() === "") {
-      return alert("Введіть нормальний запит");
+      return toast.error("The search cannot be performed without a query");
     }
     onSubmit(searchQuery);
     e.currentTarget.reset();
   };
   return (
-    <header className="searchbar">
-      <form className="form" onSubmit={handleSubmit}>
-        <button type="submit" className="button">
-          <IconContext.Provider value={{ size: "1.1em" }}>
-            <div>
-              <VscSearch />
-            </div>
-          </IconContext.Provider>
-        </button>
+    <Header>
+      <Pixabay width="250" fill="rgb(184 215 228)" />
+      <SearchForm onSubmit={handleSubmit}>
+        <SearchFormButton type="submit">
+          <SearchFormButtonLabel>Search</SearchFormButtonLabel>
+          <FcSearch size={"2em"} />
+        </SearchFormButton>
 
-        <input
-          className="input"
+        <SearchFormInput
           name="query"
           type="text"
-          autoComplete="false"
+          autoComplete="off"
           autoFocus
           placeholder="Search images and photos"
         />
-      </form>
-    </header>
+      </SearchForm>
+    </Header>
   );
 };
 
