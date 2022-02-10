@@ -27,17 +27,14 @@ class App extends Component {
       this.fetchSearchQuery();
       return;
     }
-    if (prevState.page !== this.state.page) {
-      console.log(prevState.page !== this.state.page);
-      this.fetchSearchQuery();
-    }
+
     if (prevState.chooseImage !== this.state.chooseImage) {
       this.toggleShowModal();
     }
   }
 
   searchQuery = (query) => {
-    this.setState({ searchQuery: query });
+    this.setState({ searchQuery: query, page: 1 });
   };
 
   chooseImage = (image) => {
